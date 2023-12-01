@@ -17,13 +17,16 @@ pub fn generate_puzzle() -> Puzzle {
 
     puzzle.bits = generate_bits(&puzzle);
     let mut bit_moved: std::collections::HashSet<usize> = std::collections::HashSet::new();
+	let mut moves: u32 = 0;
 
-    for moves in 0..5000 {
+    loop {
+        moves = moves + 1;
+
         if puzzle_is_good(&puzzle, &bit_moved) {
             return puzzle;
         }
 
-        if moves > 5000 {
+        if moves > 10000 {
             return generate_puzzle();
         }
 
