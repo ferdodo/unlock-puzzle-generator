@@ -14,7 +14,7 @@ pub fn generate_random_number(min: u32, max: u32) -> u32 {
 
         let result: u32 = rng.gen();
         RNG = Some(rng);
-        (result % max) + min
+        (result % (max - min)) + min
     }
 }
 
