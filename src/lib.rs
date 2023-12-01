@@ -17,11 +17,12 @@ mod get_seed;
 
 use serde::{Serialize, Deserialize};
 use serde_json;
-
 use generate_puzzle::generate_puzzle;
+use wasm_bindgen::prelude::wasm_bindgen;
 
-fn main() {
+#[wasm_bindgen]
+pub fn generate_puzzle_json() -> String {
     let mut puzzle = generate_puzzle();
     let mut puzzle_json = serde_json::to_string(&puzzle).unwrap();
-    println!("Nombre aléatoire : {}", puzzle_json);
+    puzzle_json
 }
