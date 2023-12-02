@@ -15,6 +15,8 @@ mod is_latch_move_legal;
 mod is_bit_move_legal;
 mod get_seed;
 mod there_is_a_big_vertical_block;
+mod there_is_a_big_horizontal_block_in_the_bottom_right;
+mod there_is_a_big_horizontal_block;
 
 use serde::{Serialize, Deserialize};
 use serde_json;

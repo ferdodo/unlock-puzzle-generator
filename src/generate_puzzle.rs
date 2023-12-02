@@ -8,6 +8,8 @@ use super::there_is_a_big_vertical_block_in_the_upper_right::there_is_a_big_vert
 use super::there_is_few_empty_slots::there_is_few_empty_slots;
 use super::generate_bits::generate_bits;
 use super::there_is_a_big_vertical_block::there_is_a_big_vertical_block;
+use super::there_is_a_big_horizontal_block_in_the_bottom_right::there_is_a_big_horizontal_block_in_the_bottom_right;
+use super::there_is_a_big_horizontal_block::there_is_a_big_horizontal_block;
 use std::time::{Instant, Duration};
 
 pub fn generate_puzzle() -> Option<Puzzle> {
@@ -21,15 +23,20 @@ pub fn generate_puzzle() -> Option<Puzzle> {
     let mut bit_moved: std::collections::HashSet<usize> = std::collections::HashSet::new();
 	let mut moves: u32 = 0;
 
-    loop {
-		if !there_is_few_empty_slots(&puzzle) {
-			return None;
-		}
+	if !there_is_few_empty_slots(&puzzle) {
+		return None;
+	}
 
-		if !there_is_a_big_vertical_block(&puzzle) {
-			return None;
-		}
-    
+	if !there_is_a_big_vertical_block(&puzzle) {
+		return None;
+	}
+   
+	if !there_is_a_big_horizontal_block(&puzzle) {
+		return None;
+	}
+
+    loop {
+
         if puzzle_is_good(&puzzle, &bit_moved) {
             return Some(puzzle);
         }
@@ -82,6 +89,7 @@ pub fn generate_puzzle() -> Option<Puzzle> {
 fn puzzle_is_good(puzzle: &Puzzle, bit_moved: &std::collections::HashSet<usize>) -> bool {
     puzzle.latch.block.x == 0
         && there_is_a_big_vertical_block_in_the_upper_right(&puzzle)
+        && there_is_a_big_horizontal_block_in_the_bottom_right(&puzzle)
         && bit_moved.len() == puzzle.bits.len()
 }
 
