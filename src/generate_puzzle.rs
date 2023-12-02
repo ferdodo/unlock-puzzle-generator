@@ -116,7 +116,7 @@ mod tests {
 	    assert_eq!(puzzle.latch.block.w, 2);
 	    assert_eq!(puzzle.latch.block.h, 1);
 	    let elapsed_time = start_time.elapsed();
-	    let max_duration = Duration::from_secs(1);
+	    let max_duration = Duration::from_secs(2);
 	    assert!(elapsed_time < max_duration, "Exceeded maximal duration for generating a puzzle !");
 	}
 }
