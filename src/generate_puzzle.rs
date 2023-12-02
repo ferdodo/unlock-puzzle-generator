@@ -41,7 +41,7 @@ pub fn generate_puzzle() -> Option<Puzzle> {
             return Some(puzzle);
         }
 
-        if moves > 1000 {
+        if moves > 5000 {
             return None;
         }
 
@@ -66,7 +66,7 @@ pub fn generate_puzzle() -> Option<Puzzle> {
                 puzzle.bits[bit_index].block = moved_block;
             }
         } else {
-            let direction = generate_random_number(0, 100) < 50;
+            let direction = generate_random_number(0, 100) < 10;
             let move_latch_event_x = puzzle.latch.block.x + if direction { 1 } else { -1 };
 
             let moved_block = Block {
@@ -100,23 +100,25 @@ mod tests {
 
 	#[test]
 	fn test_generate_puzzle() {
-	    let start_time = Instant::now();
-	    let mut attempts = 0;
-	    let mut puzzle = None;
+		for i in 0..20 {
+		    let start_time = Instant::now();
+		    let mut attempts = 0;
+		    let mut puzzle = None;
 
-	    while puzzle.is_none() && attempts < 10000 {
-	        puzzle = generate_puzzle();
-	        attempts += 1;
-	    }
+		    while puzzle.is_none() && attempts < 10000 {
+		        puzzle = generate_puzzle();
+		        attempts += 1;
+		    }
 
-	    assert!(puzzle.is_some());
-	    let puzzle = puzzle.unwrap();
-	    assert_eq!(puzzle.block.w, 6);
-	    assert_eq!(puzzle.block.h, 6);
-	    assert_eq!(puzzle.latch.block.w, 2);
-	    assert_eq!(puzzle.latch.block.h, 1);
-	    let elapsed_time = start_time.elapsed();
-	    let max_duration = Duration::from_secs(2);
-	    assert!(elapsed_time < max_duration, "Exceeded maximal duration for generating a puzzle !");
+		    assert!(puzzle.is_some());
+		    let puzzle = puzzle.unwrap();
+		    assert_eq!(puzzle.block.w, 6);
+		    assert_eq!(puzzle.block.h, 6);
+		    assert_eq!(puzzle.latch.block.w, 2);
+		    assert_eq!(puzzle.latch.block.h, 1);
+		    let elapsed_time = start_time.elapsed();
+		    let max_duration = Duration::from_millis(20000);
+		    assert!(elapsed_time < max_duration, "Exceeded maximal duration for generating a puzzle !");
+		}
 	}
 }

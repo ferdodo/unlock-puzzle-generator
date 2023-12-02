@@ -6,11 +6,12 @@ use super::block::Block;
 pub fn there_is_a_big_horizontal_block_in_the_bottom_right(puzzle: &Puzzle) -> bool {
 	for bit in &puzzle.bits {
 		if bit.block.w > 2 {
-			if bit.block.y == 5 {
+			if bit.block.y > 2 {
 				if bit.block.x > (puzzle.block.w - 4) {
 					return true;
 				}
 			}
+
 		}
 	}
 
