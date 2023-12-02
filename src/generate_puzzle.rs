@@ -7,8 +7,10 @@ use super::latch::Latch;
 use super::there_is_a_big_vertical_block_in_the_upper_right::there_is_a_big_vertical_block_in_the_upper_right;
 use super::there_is_few_empty_slots::there_is_few_empty_slots;
 use super::generate_bits::generate_bits;
+use super::there_is_a_big_vertical_block::there_is_a_big_vertical_block;
+use std::time::{Instant, Duration};
 
-pub fn generate_puzzle() -> Puzzle {
+pub fn generate_puzzle() -> Option<Puzzle> {
     let mut puzzle: Puzzle = Puzzle {
         block: Block { x: 0, y: 0, w: 6, h: 6 },
         latch: Latch { block: Block { x: 0, y: 2, w: 2, h: 1 } },
@@ -20,14 +22,20 @@ pub fn generate_puzzle() -> Puzzle {
 	let mut moves: u32 = 0;
 
     loop {
-        moves = moves + 1;
+		if !there_is_few_empty_slots(&puzzle) {
+			return None;
+		}
 
+		if !there_is_a_big_vertical_block(&puzzle) {
+			return None;
+		}
+    
         if puzzle_is_good(&puzzle, &bit_moved) {
-            return puzzle;
+            return Some(puzzle);
         }
 
-        if moves > 10000 {
-            return generate_puzzle();
+        if moves > 1000 {
+            return None;
         }
 
         let move_bit = generate_random_number(0, 100) < 90;
@@ -46,6 +54,7 @@ pub fn generate_puzzle() -> Puzzle {
             };
 
             if is_bit_move_legal(&puzzle, bit.id, &moved_block) {
+                moves = moves + 1;
                 bit_moved.insert(bit.id as usize);
                 puzzle.bits[bit_index].block = moved_block;
             }
@@ -61,18 +70,18 @@ pub fn generate_puzzle() -> Puzzle {
             };
 
             if is_latch_move_legal(&puzzle, &moved_block) {
+                moves = moves + 1;
                 puzzle.latch.block.x = move_latch_event_x;
             }
         }
     }
 
-    puzzle
+    Some(puzzle);
 }
 
 fn puzzle_is_good(puzzle: &Puzzle, bit_moved: &std::collections::HashSet<usize>) -> bool {
     puzzle.latch.block.x == 0
         && there_is_a_big_vertical_block_in_the_upper_right(&puzzle)
-        && there_is_few_empty_slots(&puzzle)
         && bit_moved.len() == puzzle.bits.len()
 }
 
@@ -81,12 +90,25 @@ fn puzzle_is_good(puzzle: &Puzzle, bit_moved: &std::collections::HashSet<usize>)
 mod tests {
     use super::*;
 
-    #[test]
-    fn test_generate_puzzle() {
-        let puzzle = generate_puzzle();
-        assert_eq!(puzzle.block.w, 6);
-        assert_eq!(puzzle.block.h, 6);
-        assert_eq!(puzzle.latch.block.w, 2);
-        assert_eq!(puzzle.latch.block.h, 1);
-    }
+	#[test]
+	fn test_generate_puzzle() {
+	    let start_time = Instant::now();
+	    let mut attempts = 0;
+	    let mut puzzle = None;
+
+	    while puzzle.is_none() && attempts < 10000 {
+	        puzzle = generate_puzzle();
+	        attempts += 1;
+	    }
+
+	    assert!(puzzle.is_some());
+	    let puzzle = puzzle.unwrap();
+	    assert_eq!(puzzle.block.w, 6);
+	    assert_eq!(puzzle.block.h, 6);
+	    assert_eq!(puzzle.latch.block.w, 2);
+	    assert_eq!(puzzle.latch.block.h, 1);
+	    let elapsed_time = start_time.elapsed();
+	    let max_duration = Duration::from_secs(1);
+	    assert!(elapsed_time < max_duration, "Exceeded maximal duration for generating a puzzle !");
+	}
 }

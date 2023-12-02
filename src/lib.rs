@@ -14,6 +14,7 @@ mod there_is_few_empty_slots;
 mod is_latch_move_legal;
 mod is_bit_move_legal;
 mod get_seed;
+mod there_is_a_big_vertical_block;
 
 use serde::{Serialize, Deserialize};
 use serde_json;
@@ -22,7 +23,12 @@ use wasm_bindgen::prelude::wasm_bindgen;
 
 #[wasm_bindgen]
 pub fn generate_puzzle_json() -> String {
-    let mut puzzle = generate_puzzle();
+    let mut puzzle = None;
+
+    while puzzle.is_none() {
+        puzzle = generate_puzzle();
+    }
+
     let mut puzzle_json = serde_json::to_string(&puzzle).unwrap();
     puzzle_json
 }
